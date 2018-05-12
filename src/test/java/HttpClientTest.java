@@ -26,16 +26,22 @@ public class HttpClientTest {
 
     @Test
     public void testURIBuilder() throws Exception{
+        //URI便捷工具
         URI uri = new URIBuilder()
                 .setScheme("https")
                 .setHost("www.baidu.com")
-                .setPath("baidu")
+                .setPath("/baidu")
                 .setParameter("tn", "monline_3_dg")
                 .setParameter("ie", "utf-8")
                 .setParameter("wd", "httpclient+易踪")
                 .build();
         HttpPost post = new HttpPost(uri);
         System.out.println(post.getURI());
+        CloseableHttpClient httpClient = connectionManager.getHttpClient();
+        CloseableHttpResponse response = httpClient.execute(post);
+        //获取响应信息
+        System.out.println(response.getProtocolVersion());
+        System.out.println(response.getStatusLine().getStatusCode());
     }
 
     @Test

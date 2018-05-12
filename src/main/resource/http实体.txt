@@ -1,0 +1,20 @@
+1.http消息可以携带http实体，这个http实体可以是http请求，也可以是http响应。
+2.实体分三种：
+    1.streamed：http内容是通过流来接收或者generated on the fly。
+    2.self-contained：这种类型的实体内容通常是可重复的。
+    3.wrapping：这种类型的内容是从另外的http实体中获取的。
+请求类的实体通常由应用程序创建，由httpclient发送给服务器。在请求类的实体中，streamed和self-contaoned两种类型的区别
+不重要了。这种情况下，一般认为 不可重复的实体是streamed类型，可重复的实体是 self-contained。
+3.可重复的实体
+    一个实体如果是可重复的，也就是说它包含的内容可以被多次读取。这中多次读取只有contained（自包含）的实体可做到（如
+ByteArrayEntity和StringEntity）
+
+4.http实体的使用
+    1.当需要执行一个完整的内容的http请求或者http请求已经成功，服务器要发送响应到客户端时，http实体就会被创建。
+    2.从http实体中读取内容，可以利用HttpEntity类的getContent方法来获取实体的输入流（InputStream），或者writeTo
+    （OutputStream）方法来获取输出流。
+    3.当实体类被接收后，可以用HttpEntity类的getContentType和getContentLength方法来读取Content_type和Content_Length
+    两个头消息。由于Content_Type包含mime_types的字符编码，比如text/plain和text/html，HttpEntity类的getContentEncoding
+    方法就是读取这个编码的。如果头信息不存在，getContentLength方法返回-1，getContentType返回值为null。
+
+
