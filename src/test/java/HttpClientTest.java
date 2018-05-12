@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *         Date: 2018/5/10
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "applicationContext-test.xml")
+@ContextConfiguration(locations ="classpath:applicationContext-test.xml")
 public class HttpClientTest {
 
     @Autowired
@@ -26,7 +26,7 @@ public class HttpClientTest {
         HttpGet get = new HttpGet("https://blog.csdn.net/zhuwukai/article/details/78644484");
         CloseableHttpResponse response = httpClient.execute(get);
         String string = EntityUtils.toString(response.getEntity());
-        System.out.printf(string);
+
     }
 
 }
