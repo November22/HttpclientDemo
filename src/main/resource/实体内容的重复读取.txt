@@ -1,0 +1,3 @@
+    1.有些情况下，我们希望可以重复读取http实体的内容。这就需要把http实体内容缓存到磁盘上。
+最简单的方法是把 HttpEntity转换为BufferedHttpEntity，这样就是把原来的http实体的内容缓冲到了
+内存中，后面我们就可以重复读取BufferedHttpEntity的内容。

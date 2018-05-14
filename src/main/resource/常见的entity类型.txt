@@ -1,0 +1,9 @@
+HttpClient提供的这几个类涵盖的常见的数据类型，如String，byte数组，输入流，和文件类型：
+StringEntity,ByteArrayEntity,InputStreamEntity,FileEntity;
+
+请求体中包含http实体：
+File file = new File("somefile.txt");
+FileEntity entity = new FileEntity(file, ContentType.create("text/plain", "UTF-8"));
+
+HttpPost httppost = new HttpPost("https://www.yeetrack.com/action.do");
+httppost.setEntity(entity);

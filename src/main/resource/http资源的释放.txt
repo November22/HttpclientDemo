@@ -1,0 +1,27 @@
+1.为了确保系统资源被正确的释放，我们要么管理http实体的内容流、要么关闭http响应。
+    CloseableHttpClient httpclient =  HttpClients.createDefault();
+    HttpGet httpget = new HttpGet("https://www.yeetrack.com/");
+    CloseableHttpResponse response = httpclient.execute(httpget);
+    try {
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            InputStream instream = entity.getContent();
+            try {
+                // do something useful
+            } finally {
+                instream.close();
+            }
+        }
+    } finally {
+        response.close();
+    }
+1.1 关闭http实体内容流和关闭http响应的区别在于，前者通过【消耗http实体的内容】来保持http相关的http连接，
+然后后者会立即关闭、丢弃http连接。
+1.2如果希望快速关闭连接，可以直接response.close();
+
+
+
+
+
+
+
