@@ -1,5 +1,7 @@
 import com.httpclient.HttpConnectionManager;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -7,6 +9,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +19,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author sen.huang
@@ -27,6 +33,19 @@ public class HttpClientTest {
 
     @Autowired
     private HttpConnectionManager connectionManager;
+
+    @Test
+    public void testForm() throws Exception{
+        CloseableHttpClient httpClient = connectionManager.getHttpClient();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add( new BasicNameValuePair("username","November22"));
+        params.add( new BasicNameValuePair("password","az18380461088"));
+        UrlEncodedFormEntity encodedFormEntity = new UrlEncodedFormEntity(params, "UTF-8");
+        HttpPost post = new HttpPost("https://passport.csdn.net/account/verify");
+        CloseableHttpResponse response = httpClient.execute(post);
+        System.out.println(response.getAllHeaders());
+        System.out.println(response.getEntity());
+    }
 
     @Test
     public void testBufferedEntity() throws Exception{
