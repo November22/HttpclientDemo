@@ -1,0 +1,28 @@
+处理http响应的方法就是使用ResponseHandler接口,这个接口中有handleResponse(HttpResponse response)方法。
+    CloseableHttpClient httpclient = HttpClients.createDefault();
+    HttpGet httpget = new HttpGet("https://www.yeetrack.com/json");
+
+    ResponseHandler&lt;MyJsonObject&gt; rh = new ResponseHandler&lt;MyJsonObject&gt;() {
+
+        @Override
+        public JsonObject handleResponse(
+            final HttpResponse response) throws IOException {
+            StatusLine statusLine = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            if (statusLine.getStatusCode() &gt;= 300) {
+                throw new HttpResponseException(
+                        statusLine.getStatusCode(),
+                        statusLine.getReasonPhrase());
+            }
+            if (entity == null) {
+                throw new ClientProtocolException("Response contains no content");
+            }
+            Gson gson = new GsonBuilder().create();
+            ContentType contentType = ContentType.getOrDefault(entity);
+            Charset charset = contentType.getCharset();
+            Reader reader = new InputStreamReader(entity.getContent(), charset);
+            return gson.fromJson(reader, MyJsonObject.class);
+        }
+    };
+    //设置responseHandler，当执行http方法时，就会返回MyJsonObject对象。
+    MyJsonObject myjson = client.execute(httpget, rh);

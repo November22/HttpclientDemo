@@ -5,11 +5,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +38,23 @@ public class HttpClientTest {
 
     @Test
     public void testForm() throws Exception{
+        BasicHttpContext basicHttpContext = new BasicHttpContext();
+        HttpClientContext context = HttpClientContext.adapt(basicHttpContext);
+
         CloseableHttpClient httpClient = connectionManager.getHttpClient();
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add( new BasicNameValuePair("username","November22"));
         params.add( new BasicNameValuePair("password","az18380461088"));
         UrlEncodedFormEntity encodedFormEntity = new UrlEncodedFormEntity(params, "UTF-8");
-        HttpPost post = new HttpPost("https://passport.csdn.net/account/verify");
-        CloseableHttpResponse response = httpClient.execute(post);
+        HttpPost post = new HttpPost("https://passport.csdn.net/account/verify;jsessionid=430FDDAAD3308555726AC7045DE82458.tomcat1");
+        post.setEntity(encodedFormEntity);
+        CloseableHttpResponse response = httpClient.execute(post,context);
         System.out.println(response.getAllHeaders());
         System.out.println(response.getEntity());
+
+        CloseableHttpClient httpClient2 = connectionManager.getHttpClient();
+        HttpPost post2 = new HttpPost("https://passport.csdn.net/account/verify");
+        CloseableHttpResponse response2 = httpClient2.execute(post2,context);
     }
 
     @Test
