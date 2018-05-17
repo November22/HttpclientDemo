@@ -1,0 +1,79 @@
+    1.在http的使用中，我们希望能够在一些逻辑相关的请求-响应中，保持状态信息。为了使应用程序可以
+保持http的持续状态，HttpClient允许http连接在特定的Http上下文中执行。如果在[持续的http请求]中
+使用了同样的上下文，那么这些请求就可以被分配到一个[逻辑会话中]。
+    2.HttpContext可以包含任意类型的对象，因此在多线程中使用是不安全的。推荐每个县城都只包含知己的http上线文。
+    3.在http请求执行的过程中；httpClient会自动添加下面的属性到Http上下文。
+        *HttpConnection的实例，表示客户端与服务器之间的连接。
+        *HttpPost实例。
+        *HttpRoue实例，表示全部的连接路由。
+        *HttpRequest实例。
+        *HttpResponse实例。
+        *Java.lang.boolean的实例，表示是否请求被成功的发送给目标服务器。
+        *RequestConfig对象，表示httpRequest的配置信息。
+        *java.util.List<Uri>对象，表示http响应中的所有重定向地址。
+    4.可以使用HttpClientContext这个适配器来简化与上下文的交互。
+        BasicHttpContext basicHttpContext = new BasicHttpContext();
+        HttpClientContext context = HttpClientContext.adapt(basicHttpContext);
+    5.在同一逻辑会话的多个http请求中，应该使用相同的上下文来执行，这样就可以自动在请求中传递会话的状态等信息。
+     CloseableHttpClient httpclient = HttpClients.createDefault();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setSocketTimeout(1000)
+                .setConnectTimeout(1000)
+                .build();
+
+        HttpGet httpget1 = new HttpGet("https://www.yeetrack.com/1");
+        httpget1.setConfig(requestConfig);
+        CloseableHttpResponse response1 = httpclient.execute(httpget1, context);
+        try {
+            HttpEntity entity1 = response1.getEntity();
+        } finally {
+            response1.close();
+        }
+        //httpget2被执行时，也会使用httpget1的上下文
+        HttpGet httpget2 = new HttpGet("https://www.yeetrack.com/2");
+        CloseableHttpResponse response2 = httpclient.execute(httpget2, context);
+        try {
+            HttpEntity entity2 = response2.getEntity();
+        } finally {
+            response2.close();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

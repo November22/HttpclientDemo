@@ -1,5 +1,8 @@
 package com.httpclient;
 
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -63,6 +67,17 @@ public class HttpConnectionManager {
     public CloseableHttpClient getHttpClient() {
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(clientConnectionManager)
+                .addInterceptorLast(new HttpRequestInterceptor() {
+                    //可以.add来看有哪些拦截器的方法来实现
+                    //有针对请求的响应的
+
+                    @Override
+                    public void process(HttpRequest httpRequest,
+                                        HttpContext httpContext) throws HttpException, IOException {
+
+                        System.out.println("请求拦截器执行");
+                    }
+                })
                 .setKeepAliveStrategy(keepAliveStrategy)//设置默认的连接保存时间
                 .build();
 

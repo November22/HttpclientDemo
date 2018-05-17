@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -37,6 +38,19 @@ public class HttpClientTest {
     private HttpConnectionManager connectionManager;
 
     @Test
+    public void testRedirect() throws Exception{
+        BasicHttpContext basicHttpContext = new BasicHttpContext();
+        HttpClientContext clientContext = HttpClientContext.adapt(basicHttpContext);
+        CloseableHttpClient httpClient = connectionManager.getHttpClient();
+        HttpGet get = new HttpGet("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        CloseableHttpResponse response = httpClient.execute(get,clientContext);
+        URI resolve = URIUtils.resolve(get.getURI(),
+                clientContext.getTargetHost(),
+                clientContext.getRedirectLocations());
+        System.out.println(resolve.toASCIIString());
+    }
+
+    @Test
     public void testForm() throws Exception{
         BasicHttpContext basicHttpContext = new BasicHttpContext();
         HttpClientContext context = HttpClientContext.adapt(basicHttpContext);
@@ -49,9 +63,10 @@ public class HttpClientTest {
         HttpPost post = new HttpPost("https://passport.csdn.net/account/verify;jsessionid=430FDDAAD3308555726AC7045DE82458.tomcat1");
         post.setEntity(encodedFormEntity);
         CloseableHttpResponse response = httpClient.execute(post,context);
+        post.abort();
         System.out.println(response.getAllHeaders());
         System.out.println(response.getEntity());
-
+        System.out.println(context.getAuthCache());
         CloseableHttpClient httpClient2 = connectionManager.getHttpClient();
         HttpPost post2 = new HttpPost("https://passport.csdn.net/account/verify");
         CloseableHttpResponse response2 = httpClient2.execute(post2,context);
