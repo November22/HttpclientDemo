@@ -6,11 +6,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
@@ -36,6 +38,139 @@ public class HttpClientTest {
 
     @Autowired
     private HttpConnectionManager connectionManager;
+
+    @Test
+    public void testConnectionTime2() throws Exception{
+        System.out.println("开始了");
+        List<String> urls = new ArrayList<String>();
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        long start = System.currentTimeMillis();
+        for(String url:urls){
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet get = new HttpGet(url);
+            httpClient.execute(get);
+            get.releaseConnection();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("nopool"+(end-start));
+    }
+
+    @Test
+    public void testConnectionTimePool() throws Exception{
+        List<String> urls = new ArrayList<String>();
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        urls.add("https://blog.csdn.net/zhuwukai/article/details/78644484");
+        urls.add("https://zhidao.baidu.com/question/712303776653338765.html");
+        urls.add("https://blog.csdn.net/daguairen/article/details/52442149");
+        urls.add("https://blog.csdn.net/nav/blockchain");
+        long start = System.currentTimeMillis();
+        for(String url:urls){
+            CloseableHttpClient httpClient = connectionManager.getHttpClient();
+            HttpGet get = new HttpGet(url);
+            httpClient.execute(get);
+            get.releaseConnection();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("pool"+(end-start));
+    }
 
     @Test
     public void testRedirect() throws Exception{
