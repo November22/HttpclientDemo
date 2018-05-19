@@ -1,0 +1,66 @@
+    1.HTTP/1.1默认支持http连接复用。
+    2.httpClient即可以直连，也可以通过多个中转路由（hops）和目标服务器建立连接。httpclient把路由氛围三种
+plain（明文），tunneled（隧道）和layered（分层）。隧道连接中使用的多个中间代理被称作代理链。
+    3.客户端直接连接到目标主机或者【只通过】了一个中间代理，这种就是Plain路由。
+客户端通过第一个代理建立连接，通过代理链tunnelling，这种情况就是Tunneled路由。不通过中间代理的路由不可能时tunneled路由。
+客户端在一个已经存在的连接上进行协议分层，这样建立起来的路由就是layered路由。
+协议只能在隧道—>目标主机，或者直接连接（没有代理），这两种链路上进行分层。
+    4.为了防止通过https消息传递的消息不被未授权的第三方获取，截取，http可以使用【SSL/TLS】协议来保证http的传输安全。
+
+    5.管理连接和连接管理器
+        1.Http连接是复杂，有状态，线程不安全的对象。
+        2.一个Http连接只能被一个线程访问。
+        3.HttpClient使用一个叫做Http连接管理器的特殊实体类来管理http连接，该实体类需要实现【HttpClientConnectionManager】接口。
+        **4.http连接管理器 管理持久http连接的生命周期；同步持久连接（线程安全）
+        **5.BasicHttpClientConnectionManager（只能管理一个线程）| PoolingHttpClientConnectionManager(自定义数量)
+        6.自定义连接存活策略，自定义实现 【ConnectionKeepAliveStrategy】。在创建HttpClient的时候，设置。
+
+    6.socket连接工厂
+        1.Http连接使用【java.net.Socket】类来传输数据。依赖于ConnectionSocketFactory接口来创建，初始化和连接socket。
+    这样就允许Http的用户在代码运行的时候，指定socket初始化代码。（PlainConnectionSocketFactory是默认创建的）
+        2.LayeredConnectionSocketFactory是ConnectionSocketFactory的拓展接口。分层socket工厂类可以在明文socket的基础上
+    创建连接。【分层socket主要用于在代理服务器之间创建安全socket】。HttpClient使用SSLSocketFactory这个类实现安全socket，
+    SSLSocketFactory实现了SSL/TLS分层。
+    =========================================================
+        ConnectionSocketFactory plainsf = <...>
+        LayeredConnectionSocketFactory sslsf = <...>
+        Registry<ConnectionSocketFactory> r = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", plainsf)//http协议
+                .register("https", sslsf)//https协议
+                .build();
+
+        HttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(r);
+        HttpClients.custom()
+                .setConnectionManager(cm)
+                .build();
+    =========================================================
+        3.HttpClient使用SSLSocketFactory来创建ssl连接。
+    =========================================================
+        HttpClientContext clientContext = HttpClientContext.create();
+        KeyStore myTrustStore = <...>
+        SSLContext sslContext = SSLContexts.custom()
+                .useTLS()
+                .loadTrustMaterial(myTrustStore)
+                .build();
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+    =========================================================
+
+    7.域名验证
+        https://www.yeetrack.com/?p=782
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

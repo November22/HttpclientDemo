@@ -5,6 +5,15 @@ HTTP/1.0和HTTP/1.1都默认使用相对的uri路径。
 URIUtils类的resolve方法可以用于将拦截的绝对路径构建成最终的请求。
 这个方法包含了最后一个分片标识符或者原始请求。
 
+HttpClient会自动处理所有类型的重定向，除了那些Http规范明确禁止的重定向。
+我们可以使用[自定义的重定向策略来放松Http规范对Post方法重定向的限制]。
+    //LaxRedirectStrategy可以自动重定向所有的HEAD，GET，POST请求，解除了http规范对post请求重定向的限制。
+    LaxRedirectStrategy redirectStrategy = new LaxRedirectStrategy();
+    CloseableHttpClient httpclient = HttpClients.custom()
+            .setRedirectStrategy(redirectStrategy)
+            .build();
+
+
  CloseableHttpClient httpclient = HttpClients.createDefault();
     HttpClientContext context = HttpClientContext.create();
     HttpGet httpget = new HttpGet("https://www.yeetrack.com:8080/");
