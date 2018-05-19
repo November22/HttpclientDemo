@@ -1,0 +1,57 @@
+    1.用户凭证
+        任何用户认证的过程，都需要一系列的凭证来确定用户的身份。最简单的用户凭证可以是用户名+密码的形式。UsernamePasswordCredentials这个类可以用来表示这种情况。
+        ##UsernamePasswordCredentials credential = new UsernamePasswordCredentials(userName, passWord);
+    2.NTCredentials 是微软的windows系统使用的一种凭据，包含username/password。还包括一系列其他的属性，比如用户所在的域名等。
+        ##NTCredentials creds = new NTCredentials("user", "pwd", "workstation", "domain");
+          System.out.println(creds.getUserPrincipal().getName());
+          System.out.println(creds.getPassword());
+
+    3.***认证方案
+        AutoScheme接口表示一个抽象的面向 挑战/响应 的认证方案。
+        客户端请求服务器受保护的资源，服务器会发送过来一个chanllenge（挑战），认证方案需要解析，处理这个挑战。
+        为processed challenge提供一些属性值：认证方案的类型，和此方案需要的一些参数，这种方案的适用范围，
+        使用给定的授权信息生成授权字符串；生成http请求，用来响应服务器发送过来的授权challenge。
+        Http实现的AutoScheme：Basic，Digest，NTLM，SPNEGO
+    4.***凭证provider
+        凭证providers旨在维护一套用户的凭证，当需要某种特定的凭证时，provider就应该能产生这种凭证。
+    认证的具体内容包括主机名、端口号、realm name和认证方案名。凭证provider实现了CredentialProvider接口。
+    默认的凭据Provider叫做【BasicCredentialProvider】
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+            new AuthScope("somehost", AuthScope.ANY_PORT),
+            new UsernamePasswordCredentials("u1", "p1"));
+        credsProvider.setCredentials(
+            new AuthScope("somehost", 8080),
+            new UsernamePasswordCredentials("u2", "p2"));
+    5.Http授权和执行上下文
+        HttpClient依赖【AuthState类】去跟踪认证过程中的状态的详细信息。在http请求过程中，HttpClient创建
+    两个AuthState实例：一个用于目标服务器认证，一个用户代理服务器认证。
+    在http请求执行过程中，HttpClient会向执行上下文中添加下面的授权对象：
+        Lookup对象：表示使用的认证方案。这个对象的值可以在本地上下文中进行设置，来覆盖默认值。
+        AuthState对象，表示目标服务器的认证状态，这个对象的值可以在本地上下文中进行设置，来覆盖默认值。
+        AuthCache对象，表示认证数据的缓存，这个对象的值可以在本地上下文中进行设置，来覆盖默认值。
+    ***在请求执行前，自定义本地HttpContext对象来设置需要的Http认证上下文；
+    也可以在请求执行后，再检测HttpContext的状态，来查看授权是否成功。
+
+    6.从版本4.1开始，HttpClient就会自动缓存验证通过的认证信息。但是为了使用这个缓存的认证信息，
+我们必须在同一个上下文中执行逻辑相关的请求。一旦超出该上下文的作用范围，缓存的认证信息就会失效。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,13 @@
 import com.httpclient.HttpConnectionManager;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthSchemeProvider;
+import org.apache.http.auth.AuthSchemeRegistry;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.AuthState;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -9,8 +16,13 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.config.Lookup;
+import org.apache.http.config.Registry;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.auth.BasicSchemeFactory;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,6 +50,36 @@ public class HttpClientTest {
 
     @Autowired
     private HttpConnectionManager connectionManager;
+
+    @Test
+    public void testAuth() throws Exception{
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+
+        //凭证provider
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials("November22", "az18380461088"));
+        //设置认证方案
+//        Lookup<AuthSchemeProvider> authRegistry = <...>
+        //认证缓存
+        AuthCache authCache = new BasicAuthCache();
+        HttpClientContext clientContext = HttpClientContext.create();
+        clientContext.setAuthCache(authCache);
+        clientContext.setCredentialsProvider(credentialsProvider);
+//        clientContext.setAuthSchemeRegistry(lookup);
+
+        HttpGet httpget = new HttpGet("https://blog.csdn.net");
+        CloseableHttpResponse response1 = httpclient.execute(httpget, clientContext);
+        AuthState proxyAuthState = clientContext.getProxyAuthState();
+        System.out.println("Proxy auth state: " + proxyAuthState.getState());
+        System.out.println("Proxy auth scheme: " + proxyAuthState.getAuthScheme());
+        System.out.println("Proxy auth credentials: " + proxyAuthState.getCredentials());
+        AuthState targetAuthState = clientContext.getTargetAuthState();
+        System.out.println("Target auth state: " + targetAuthState.getState());
+        System.out.println("Target auth scheme: " + targetAuthState.getAuthScheme());
+        System.out.println("Target auth credentials: " + targetAuthState.getCredentials());
+
+    }
 
     @Test
     public void testConnectionTime2() throws Exception{

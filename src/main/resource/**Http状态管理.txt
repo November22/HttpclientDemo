@@ -1,0 +1,90 @@
+    1.Http cookie是一个token或者很短的报文信息，http代理和服务器可以通过cookie来维持会话状态。
+    2.HttpClient使用Cookie接口来代表cookie。【一般，cookie也会包含版本号，域名，路径和cookie的有效期】
+    3.SetCookie接口可以代表服务器发给http代理一个set-cookie响应头，在浏览器中，这个set-cookie响应头可以写入cookie，
+以便保持会话状态。
+    4.ClientCookie接口继承了Cookie接口，并进行了功能扩展。
+    5.Cookies版本，兼容网景的规范，但不兼容官方规范的cookie，是版本0，兼容官方规范版本的是1。
+        网景版：
+            BasicClientCookie netscapeCookie = new BasicClientCookie("name", "value");
+            netscapeCookie.setVersion(0);
+            netscapeCookie.setDomain(".yeetrack.com");
+            netscapeCookie.setPath("/");
+        官方版：
+            BasicClientCookie stdCookie = new BasicClientCookie("name", "value");
+            stdCookie.setVersion(1);
+            stdCookie.setDomain(".yeetrack.com");
+            stdCookie.setPath("/");
+            stdCookie.setSecure(true);
+            // Set attributes EXACTLY as sent by the server
+            stdCookie.setAttribute(ClientCookie.VERSION_ATTR, "1");
+            stdCookie.setAttribute(ClientCookie.DOMAIN_ATTR, ".yeetrack.com");
+        Set-Cookie2兼容cookie：
+            BasicClientCookie stdCookie = new BasicClientCookie("name", "value");
+            stdCookie.setVersion(1);
+            stdCookie.setDomain(".yeetrack.com");
+            stdCookie.setPath("/");
+            stdCookie.setSecure(true);
+            // Set attributes EXACTLY as sent by the server
+            stdCookie.setAttribute(ClientCookie.VERSION_ATTR, "1");
+            stdCookie.setAttribute(ClientCookie.DOMAIN_ATTR, ".yeetrack.com");
+
+    6.***Cookie规范【示例：CookieSpecs.STANDARD】
+        *Netscape draft:符合网景公司指定的规范。但是尽量不要使用，除非一定要保证兼容很旧的代码。
+        *Standard：RFC 2965 HTTP壮体啊管理规范。
+        *Browser compatibility: 这种方式，尽量模仿常用的浏览器，如IE和firefox
+        *Best match：它基本上将上面的几种规范积聚到一个类中。
+        *Ignore cookies: 忽略所有Cookie
+        &&&强烈推荐Best Match匹配规则（4.5.1版本中，该规范过期。）
+
+    7.选择Cookie策略
+        RequestConfig globalConfig = RequestConfig.custom()
+                .setCookieSpec(CookieSpecs.BEST_MATCH)
+                .build();
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultRequestConfig(globalConfig)
+                .build();
+        RequestConfig localConfig = RequestConfig.copy(globalConfig)
+                .setCookieSpec(CookieSpecs.BROWSER_COMPATIBILITY)
+                .build();
+        HttpGet httpGet = new HttpGet("https://www.yeetrack.com");
+        httpGet.setConfig(localConfig);
+
+    8.如果我们要自定义Cookie测试，就要自己实现CookieSpec接口，
+然后创建一个CookieSpecProvider接口来新建、初始化自定义CookieSpec接口，最后把CookieSpecProvider注册到HttpClient中.
+
+    9.Cookie持久化：HttpClient可以使用任何存储方式的cookie store，只要这个cookie store实现了【CookieStore接口】。
+默认的CookieStore通过java.util.ArrayList简单实现了【BasicCookieStore】。存在在BasicCookieStore中的Cookie，
+当载体对象被当做垃圾回收掉后，就会丢失。如果必要，用户可以自己实现更为复杂的方式。
+    // 创建CookieStore实例
+        CookieStore cookieStore = new BasicCookieStore();
+        // 新建一个Cookie
+        BasicClientCookie cookie = new BasicClientCookie("name", "value");
+        cookie.setVersion(0);
+        cookie.setDomain(".mycompany.com");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie):
+        //将CookieStore设置到httpClient中
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultCookieStore(cookieStore)//存储这次请求的响应cookie
+                .build();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
